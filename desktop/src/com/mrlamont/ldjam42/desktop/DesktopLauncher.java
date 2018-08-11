@@ -7,6 +7,9 @@ import com.mrlamont.ldjam42.LDJAM42Game;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+                config.title = "Ludum Dare 42: Rusnning Out of Space";
+                config.width = 1024;
+                config.height = 576;
 		new LwjglApplication(new LDJAM42Game(), config);
 	}
 }
