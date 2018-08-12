@@ -11,6 +11,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mrlamont.ldjam42.LDJAM42Game;
@@ -26,15 +27,17 @@ public class MenuScreen implements Screen {
     private OrthographicCamera cam;
     private ShapeRenderer shapeRender;
     private Texture title;
-    private Texture play;
     private boolean first = true;
+    private BitmapFont font32;
 
     public MenuScreen(LDJAM42Game game) {
         this.game = game;
         batch = game.getBatch();
         cam = game.getCamera();
         shapeRender = new ShapeRenderer();
-
+        
+        font32 = new BitmapFont(Gdx.files.internal("Bookman32.fnt"));
+        title = new Texture(Gdx.files.internal("title.png"));
     }
 
     @Override
@@ -44,15 +47,15 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (first) {
-            title = new Texture(Gdx.files.internal("title.png"));
-            play = new Texture(Gdx.files.internal("playBtn.png"));
-            first = false;
-        }
+        
         shapeRender.begin(ShapeRenderer.ShapeType.Filled);
         shapeRender.setColor(Color.GRAY);
         shapeRender.rect(0, 0, cam.viewportWidth, cam.viewportHeight);
         shapeRender.end();
+        
+        batch.begin();
+        font32.draw(batch, "PRESS ANY KEY TO START", cam.viewportWidth/2 - 300, cam.viewportHeight/2 - 300);
+        batch.end();
     }
 
     @Override

@@ -61,15 +61,6 @@ public class Grid {
         grid[row][col] = true;
     }
 
-    public void printGrid() {
-        for (int row = 0; row < grid.length; row++) {
-            for (int col = 0; col < grid[0].length; col++) {
-                if (grid[row][col]) {
-                    System.out.printf("%d %d\n", row, col);
-                }
-            }
-        }
-    }
 
     public int checkLines() {
         int lines = 0;
