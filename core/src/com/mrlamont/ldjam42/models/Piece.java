@@ -131,4 +131,44 @@ public class Piece {
     public int getCleanCol(int spot) {
         return (int)(rotations[0][spot].y);
     }
+    
+    public int bigRow(){
+        float r = rotations[rotation][0].x;
+        for(int i = 1; i < 4; i++){
+            if(rotations[rotation][i].x > r){
+                r = rotations[rotation][i].x;
+            }
+        }
+        return (int)r;
+    }
+    
+    public int smallRow(){
+        float r = rotations[rotation][0].x;
+        for(int i = 1; i < 4; i++){
+            if(rotations[rotation][i].x < r){
+                r = rotations[rotation][i].x;
+            }
+        }
+        return (int)r;
+    }
+    
+    public int bigCol(){
+        float r = rotations[rotation][0].y;
+        for(int i = 1; i < 4; i++){
+            if(rotations[rotation][i].y > r){
+                r = rotations[rotation][i].y;
+            }
+        }
+        return (int)r;
+    }
+    
+    public int smallCol(){
+        float r = rotations[rotation][0].y;
+        for(int i = 1; i < 4; i++){
+            if(rotations[rotation][i].y < r){
+                r = rotations[rotation][i].y;
+            }
+        }
+        return (int)r;
+    }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -37,6 +38,9 @@ public class GameScreen implements Screen {
     private Piece piece;
     private int nextPiece;
     private Vector2 moved;
+    
+    private BitmapFont font32;
+    private BitmapFont font22;
 
     private float dropDelay = 1.0f;
     private float holdDelay = 0.1f;
@@ -45,6 +49,7 @@ public class GameScreen implements Screen {
 
     private boolean collision = false;
     private boolean gameOver = false;
+    private boolean pause = true;
     
     private int numLines = 0;
 
@@ -72,7 +77,9 @@ public class GameScreen implements Screen {
 
         piece = pieces[MathUtils.random(0, 6)];
         nextPiece = MathUtils.random(0, 6);
-
+        
+        font32 = new BitmapFont(Gdx.files.internal("Bookman32.fnt"));
+        font22 = new BitmapFont(Gdx.files.internal("Bookman22.fnt"));
     }
 
     public void getPiece() {
@@ -93,7 +100,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (!gameOver) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            pause = !pause;
+        }
+        if (!gameOver && !pause) {
             dropDelayTime += delta;
             sideDelayTime += delta;
 
@@ -159,7 +169,6 @@ public class GameScreen implements Screen {
                 setPieces();
                 piece.reset();
                 getPiece();
-                numLines += grid.checkLines();
             }
         }
         
@@ -205,6 +214,15 @@ public class GameScreen implements Screen {
         drawPiece();
         shapeRender.end();
 
+        batch.begin();
+        font22.setColor(Color.BLACK);
+        font32.setColor(Color.BLACK);
+        font32.draw(batch, "QUATRIS", nextCornerX, cam.viewportHeight - 2*BLOCK_SIZE);
+        font22.draw(batch, "Next Piece:", nextCornerX, nextCornerY + 7*BLOCK_SIZE );
+        font22.draw(batch, "Lines:", nextCornerX, nextCornerY - 3*BLOCK_SIZE/2);
+        font22.draw(batch, "" + numLines, nextCornerX, nextCornerY - 5*BLOCK_SIZE/2);
+        batch.end();
+        
     }
 
     private void drawPiece() {
@@ -256,6 +274,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < 4; i++) {
             grid.setPiece(piece.getRow(i), piece.getCol(i));
         }
+        numLines += grid.checkLines();
     }
 
     @Override
