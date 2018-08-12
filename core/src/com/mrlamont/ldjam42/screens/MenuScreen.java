@@ -37,7 +37,7 @@ public class MenuScreen implements Screen {
         shapeRender = new ShapeRenderer();
         
         font32 = new BitmapFont(Gdx.files.internal("Bookman32.fnt"));
-        title = new Texture(Gdx.files.internal("title.png"));
+        
     }
 
     @Override
@@ -54,8 +54,10 @@ public class MenuScreen implements Screen {
         shapeRender.end();
         
         batch.begin();
-        font32.draw(batch, "PRESS ANY KEY TO START", cam.viewportWidth/2 - 300, cam.viewportHeight/2 - 300);
+        font32.setColor(Color.BLACK);
+        font32.draw(batch, "PRESS ANY KEY TO START", cam.viewportWidth/2 - 220, cam.viewportHeight/2);
         batch.end();
+        
     }
 
     @Override
