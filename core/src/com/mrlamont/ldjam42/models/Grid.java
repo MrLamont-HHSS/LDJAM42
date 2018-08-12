@@ -73,40 +73,104 @@ public class Grid {
 
     public int checkLines() {
         int lines = 0;
-        boolean[] remove = new boolean[grid.length];
+        boolean[][] remove = new boolean[3][grid.length];
         for (int i = 0; i < grid.length / 2; i++) {
+            boolean countD = true;
+            boolean countL = true;
             boolean countR = true;
             for (int j = 0; j < grid[i].length; j++) {
                 if (!grid[i][j]) {
+                    countD = false;
+                }
+                if (!grid[j][i]) {
+                    countL = false;
+                }
+                if (!grid[j][i + grid.length / 2]) {
                     countR = false;
                 }
-
+            }
+            if (countD) {
+                remove[0][i] = true;
+                lines++;
+            }
+            if (countL) {
+                remove[1][i] = true;
+                lines++;
             }
             if (countR) {
-                remove[i] = true;
+                remove[2][i] = true;
                 lines++;
             }
         }
 
-        
         for (int i = grid.length - 1; i >= 0; i--) {
-            if (remove[i]) {
+            // if line going down
+            if (remove[0][i]) {
                 boolean[][] rGrid = new boolean[grid.length][grid[0].length];
-                genGrid(i,0,rGrid);
-                
-                for(int col = 0; col < grid.length; col++){
+                genGrid(i, 0, rGrid);
+                for (int col = 0; col < grid.length; col++) {
                     grid[i][col] = false;
                     rGrid[i][col] = false;
                 }
-                
-                for(int row = i+1; row < rGrid.length; row++){
-                    for(int col = 0; col < rGrid.length; col++){
-                        if(rGrid[row][col]){
-                            grid[row-1][col] = grid[row][col];
-                        }
-                        if(row == grid.length-1){
+                for (int col = 0; col < grid.length; col++) {
+                    boolean deleted = false;
+                    for (int row = i + 1; row < grid.length; row++) {
+                        // shuffle down
+                        if (!rGrid[row][col] && !deleted) {
+                            grid[row - 1][col] = false;
+                            deleted = true;
+                        } else if (rGrid[row][col]) {
+                            grid[row - 1][col] = grid[row][col];
                             grid[row][col] = false;
                         }
+
+                    }
+                }
+                // line on the left
+            } else if (remove[1][i]) {
+                boolean[][] rGrid = new boolean[grid.length][grid[0].length];
+                genGrid(0, i, rGrid);
+                
+                for (int row = 0; row < grid.length; row++) {
+                    grid[row][i] = false;
+                    rGrid[row][i] = false;
+                }
+                for (int row = 0; row < grid.length; row++) {
+                    boolean deleted = false;
+                    for (int col = i + 1; col < grid.length/2; col++) {
+                        // shuffle down
+                        if (!rGrid[row][col] && !deleted) {
+                            grid[row][col-1] = false;
+                            deleted = true;
+                        } else if (rGrid[row][col]) {
+                            grid[row][col-1] = grid[row][col];
+                            grid[row][col] = false;
+                        }
+
+                    }
+                }
+
+                // line on the right
+            } else if (remove[2][i]) {
+                boolean[][] rGrid = new boolean[grid.length][grid[0].length];
+                genGrid(0, i, rGrid);
+                
+                for (int row = 0; row < grid.length; row++) {
+                    grid[row][i] = false;
+                    rGrid[row][i] = false;
+                }
+                for (int row = 0; row < grid.length; row++) {
+                    boolean deleted = false;
+                    for (int col = i - 1; col > grid.length/2; col--) {
+                        // shuffle down
+                        if (!rGrid[row][col] && !deleted) {
+                            grid[row][col+1] = false;
+                            deleted = true;
+                        } else if (rGrid[row][col]) {
+                            grid[row][col+1] = grid[row][col];
+                            grid[row][col] = false;
+                        }
+
                     }
                 }
             }
@@ -116,12 +180,26 @@ public class Grid {
     }
 
     private void genGrid(int row, int col, boolean[][] rGrid) {
-        if (row >= rGrid.length || col >= rGrid.length || col < 0 || rGrid[row][col] || !grid[row][col]) {
+        if (row >= rGrid.length || row < 0 || col >= rGrid.length || col < 0 || rGrid[row][col] || !grid[row][col]) {
             return;
         }
         rGrid[row][col] = true;
-        genGrid(row+1,col, rGrid);
-        genGrid(row,col+1, rGrid);
-        genGrid(row,col-1, rGrid);
+        genGrid(row + 1, col, rGrid);
+        genGrid(row - 1, col, rGrid);
+        genGrid(row, col + 1, rGrid);
+        genGrid(row, col - 1, rGrid);
+    }
+
+    private void printGrid(boolean[][] grid) {
+        for (int i = grid.length - 1; i >= 0; i--) {
+            for (int j = 0; j < grid.length; j++) {
+                if (grid[i][j]) {
+                    System.out.print("1");
+                } else {
+                    System.out.print("0");
+                }
+            }
+            System.out.println("");
+        }
     }
 }
