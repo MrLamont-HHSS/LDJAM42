@@ -21,7 +21,7 @@ public class LDJAM42Game extends Game {
                 viewport = new FitViewport(1024, 576, cam);
                 cam.position.set(1024/2, 576/2, 0);
                 cam.update();
-		this.setScreen(new GameScreen(batch, cam, this));
+		this.setScreen(new GameScreen(this));
 	}
 
 	@Override
@@ -39,5 +39,13 @@ public class LDJAM42Game extends Game {
         @Override
         public void resize(int width, int height){
             viewport.update(width, height);
+        }
+        
+        public SpriteBatch getBatch(){
+            return batch;
+        }
+        
+        public OrthographicCamera getCamera(){
+            return cam;
         }
 }

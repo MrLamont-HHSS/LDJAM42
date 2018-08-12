@@ -43,6 +43,7 @@ public class GameScreen implements Screen {
     private BitmapFont font22;
 
     private float dropDelay = 1.0f;
+    private float[] delays = new float[10];
     private float holdDelay = 0.1f;
     private float sideDelayTime = 0;
     private float dropDelayTime = 0;
@@ -53,11 +54,11 @@ public class GameScreen implements Screen {
     
     private int numLines = 0;
 
-    public GameScreen(SpriteBatch batch, OrthographicCamera cam, LDJAM42Game game) {
+    public GameScreen(LDJAM42Game game) {
         grid = new Grid(GRID_SIZE, GRID_SIZE);
 
-        this.batch = batch;
-        this.cam = cam;
+        this.batch = game.getBatch();
+        this.cam = game.getCamera();
         shapeRender = new ShapeRenderer();
         this.game = game;
 
@@ -80,6 +81,11 @@ public class GameScreen implements Screen {
         
         font32 = new BitmapFont(Gdx.files.internal("Bookman32.fnt"));
         font22 = new BitmapFont(Gdx.files.internal("Bookman22.fnt"));
+        
+        for(int i = 0; i < 10; i++){
+            delays[i] = 1.0f - 0.1f*i;
+        }
+        
     }
 
     public void getPiece() {
@@ -100,6 +106,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        dropDelay = numLines<50? delays[numLines/5]:0.05f;
+        
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             pause = !pause;
         }
@@ -172,9 +180,6 @@ public class GameScreen implements Screen {
             }
         }
         
-        
-        
-
         shapeRender.setProjectionMatrix(cam.combined);
 
         shapeRender.begin(ShapeRenderer.ShapeType.Filled);
