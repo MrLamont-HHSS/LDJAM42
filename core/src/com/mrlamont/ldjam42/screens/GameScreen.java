@@ -12,10 +12,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.mrlamont.ldjam42.LDJAM42Game;
 import com.mrlamont.ldjam42.models.Grid;
 import com.mrlamont.ldjam42.models.Piece;
+import com.mrlamont.ldjam42.models.PieceOld;
 
 /**
  *
@@ -32,7 +34,9 @@ public class GameScreen implements Screen{
     private ShapeRenderer shapeRender;
     private Grid grid;
     private LDJAM42Game game;
+    private Piece[] pieces;
     private Piece piece;
+    private int nextPiece;
     
     
     
@@ -45,18 +49,29 @@ public class GameScreen implements Screen{
         shapeRender = new ShapeRenderer();
         this.game = game;
         
-        piece = new Piece();
-                
-        piece.set(Piece.L);
+        float cornerRow = GRID_SIZE/2 - 2;
+        float cornerCol = GRID_SIZE/2 - 2;
         
-        for(int i = 3; i < 11; i++){
-            grid.setPiece(0, i);
-            grid.setPiece(i+1, 2);
-        }
+        pieces = new Piece[7];
+        pieces[Piece.I] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{31211101, 30313233});
+        pieces[Piece.S] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{11122223,12212231});
+        pieces[Piece.Z] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{12132122,11212232});
+        pieces[Piece.L] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{11122131,10111222,12223231,20212210});
+        pieces[Piece.J] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{11122232,11121321,11213132,21222313});
+        pieces[Piece.T] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{11121322,13233322,31323322,11213122});
+        pieces[Piece.SQ] = new Piece(new Vector2(cornerRow, cornerCol), new int[]{11122122});
+        
+        piece = pieces[MathUtils.random(0, 6)];
+        nextPiece = MathUtils.random(0, 6);
+        
     }
     
     
-    
+    public void getPiece(){
+        piece = pieces[nextPiece];
+        piece.reset();
+        nextPiece = MathUtils.random(0, pieces.length - 1);
+    }
     
     
     
