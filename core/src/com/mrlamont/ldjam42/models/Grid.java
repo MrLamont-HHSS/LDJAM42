@@ -5,6 +5,9 @@
  */
 package com.mrlamont.ldjam42.models;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
 
 /**
  *
@@ -66,5 +69,28 @@ public class Grid {
                 }
             }
         }
+    }
+    
+    public int checkLines(){
+        int lines = 0;
+        for(int i = 0; i < grid.length; i++){
+            boolean count1 = true;
+            
+            for(int j = 0; j < grid[0].length; j++){
+                if(!grid[i][j]){
+                    count1 = false;
+                    break;
+                }
+            }
+            if(count1){
+                lines++;
+                
+            }
+            
+            
+            
+        }
+        
+        return lines;
     }
 }

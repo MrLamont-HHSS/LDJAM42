@@ -53,15 +53,21 @@ public class Piece {
     
     public void rotateCCW() {
         this.rotation = (this.rotation + 1) % this.numRotations;
+        if(isOffScreen()){
+            rotateCW();
+        }
     }
 
     public void rotateCW() {
         this.rotation = this.rotation == 0? this.numRotations - 1: this.rotation - 1;
+        if(isOffScreen()){
+            rotateCCW();
+        }
     }
     
     public boolean moveLeft() {
         for (int i = 0; i < 4; i++) {
-            if (rotations[rotation][i].y + location.y == 0) {
+            if (getCol(i) == 0) {
                 return false;
             }
         }
@@ -71,7 +77,7 @@ public class Piece {
     
     public boolean moveRight() {
         for (int i = 0; i < 4; i++) {
-            if (rotations[rotation][i].y + location.y == GameScreen.GRID_SIZE - 1 ) {
+            if (getCol(i) == GameScreen.GRID_SIZE - 1 ) {
                 return false;
             }
         }
@@ -81,12 +87,23 @@ public class Piece {
     
     public boolean moveDown() {
         for (int i = 0; i < 4; i++) {
-            if (rotations[rotation][i].x + location.x == 0 ) {
+            if (getRow(i) == 0 ) {
                 return false;
             }
         }
         location.x--;
         return true;
+    }
+    
+    private boolean isOffScreen(){
+        for(int i = 0; i < 4; i++){
+            int row = getRow(i);
+            int col = getCol(i);
+            if(row >= GameScreen.GRID_SIZE || row < 0 || col >= GameScreen.GRID_SIZE || col < 0){
+                return true;
+            }
+        }
+        return false;
     }
     
     public boolean moveUp() {
@@ -105,5 +122,13 @@ public class Piece {
     
     public int getCol(int spot) {
         return (int)(location.y + rotations[rotation][spot].y);
+    }
+    
+    public int getCleanRow(int spot) {
+        return (int)(rotations[0][spot].x);
+    }
+    
+    public int getCleanCol(int spot) {
+        return (int)(rotations[0][spot].y);
     }
 }
