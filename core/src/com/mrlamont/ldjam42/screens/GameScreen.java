@@ -8,6 +8,7 @@ package com.mrlamont.ldjam42.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -52,7 +53,13 @@ public class GameScreen implements Screen {
     private boolean gameOver = false;
     private boolean pause = true;
     
+    private boolean sound = true;
+    
     private int numLines = 0;
+    
+    Sound thud = Gdx.audio.newSound(Gdx.files.internal("thud.wav"));
+    Sound nope = Gdx.audio.newSound(Gdx.files.internal("nope.wav"));
+    Sound destroy = Gdx.audio.newSound(Gdx.files.internal("destroy.wav"));
 
     public GameScreen(LDJAM42Game game) {
         grid = new Grid(GRID_SIZE, GRID_SIZE);
@@ -106,11 +113,18 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            reset();
+        }
+        
         dropDelay = numLines<50? delays[numLines/5]:0.05f;
         
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-            pause = !pause;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            pause = false;
         }
+        
+        
+        
         if (!gameOver && !pause) {
             dropDelayTime += delta;
             sideDelayTime += delta;
@@ -120,11 +134,13 @@ public class GameScreen implements Screen {
                 grid.rotateCCW();
                 if (checkCollision()) {
                     grid.rotateCW();
+                    nope.play();
                 }
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
                 grid.rotateCW();
                 if (checkCollision()) {
                     grid.rotateCCW();
+                    nope.play();
                 }
             }
 
@@ -184,7 +200,7 @@ public class GameScreen implements Screen {
 
         shapeRender.begin(ShapeRenderer.ShapeType.Filled);
         // draw Background
-        if (collision) {
+        if (gameOver) {
             shapeRender.setColor(Color.RED);
         } else {
             shapeRender.setColor(Color.GRAY);
@@ -226,6 +242,20 @@ public class GameScreen implements Screen {
         font22.draw(batch, "Next Piece:", nextCornerX, nextCornerY + 7*BLOCK_SIZE );
         font22.draw(batch, "Lines:", nextCornerX, nextCornerY - 3*BLOCK_SIZE/2);
         font22.draw(batch, "" + numLines, nextCornerX, nextCornerY - 5*BLOCK_SIZE/2);
+        
+        font22.draw(batch, "Controls:", cam.viewportWidth-GRID_SIZE/2.5f*BLOCK_SIZE, nextCornerY + 7*BLOCK_SIZE );
+        font22.draw(batch, "A - Move block left", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + 6*BLOCK_SIZE );
+        font22.draw(batch, "D - Move block right", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + 5*BLOCK_SIZE );
+        font22.draw(batch, "S - Drop block faster", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + 4*BLOCK_SIZE );
+        font22.draw(batch, "K - Rotate block CCW", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + 3*BLOCK_SIZE );
+        font22.draw(batch, "L - Rotate block CW", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + 2*BLOCK_SIZE );
+        
+        font22.draw(batch, "I - Rotate grid CCW", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + 0*BLOCK_SIZE );
+        font22.draw(batch, "O - Rotate grid CW", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + -1*BLOCK_SIZE );
+        font22.draw(batch, "R - Reset/Retry", cam.viewportWidth-GRID_SIZE/2.2f*BLOCK_SIZE, nextCornerY + -3*BLOCK_SIZE );
+        if(pause && !gameOver){
+            font32.draw(batch, "Press ENTER to Start!", gridCornerX + GRID_SIZE*BLOCK_SIZE/2 - 180,gridCornerY + GRID_SIZE*BLOCK_SIZE/2 + 100 );
+        }
         batch.end();
         
     }
@@ -279,7 +309,23 @@ public class GameScreen implements Screen {
         for (int i = 0; i < 4; i++) {
             grid.setPiece(piece.getRow(i), piece.getCol(i));
         }
-        numLines += grid.checkLines();
+        int num = grid.checkLines();
+        if(num > 0){
+            numLines += num;
+            destroy.play();
+        }else{
+            thud.play();
+        }
+        
+    }
+    
+    public void reset(){
+        grid.reset();
+        nextPiece = MathUtils.random(0, pieces.length - 1);
+        getPiece();
+        numLines = 0;
+        pause = true;
+        gameOver = false;
     }
 
     @Override

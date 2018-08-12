@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mrlamont.ldjam42.screens.GameScreen;
+import com.mrlamont.ldjam42.screens.MenuScreen;
 
 public class LDJAM42Game extends Game {
         private OrthographicCamera cam;
@@ -21,7 +22,7 @@ public class LDJAM42Game extends Game {
                 viewport = new FitViewport(1024, 576, cam);
                 cam.position.set(1024/2, 576/2, 0);
                 cam.update();
-		this.setScreen(new GameScreen(this));
+		this.setScreen(new MenuScreen(this));
 	}
 
 	@Override
